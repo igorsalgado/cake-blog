@@ -93,4 +93,22 @@ return function (RouteBuilder $routes): void {
      * });
      * ```
      */
+
+    $routes->prefix('Api', function (RouteBuilder $builder): void {
+
+        $builder->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+        $builder->connect('/register', ['controller' => 'Users', 'action' => 'register']);
+        $builder->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+
+        $builder->connect('/users', ['controller' => 'Users', 'action' => 'index'])
+            ->setMethods(['GET']);
+
+        $builder->connect('/users/{id}', ['controller' => 'Users'])
+            ->setPass(['id'])
+            ->setMethods(['GET', 'PATCH', 'PUT', 'DELETE']);
+
+
+        $builder->setExtensions(['json']);
+        $builder->fallbacks(DashedRoute::class);
+    });
 };
