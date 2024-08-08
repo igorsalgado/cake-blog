@@ -100,8 +100,10 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/login', ['controller' => 'Users', 'action' => 'login']);
         $builder->connect('/register', ['controller' => 'Users', 'action' => 'register']);
         $builder->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+
         $builder->connect('/users', ['controller' => 'Users', 'action' => 'index'])
             ->setMethods(['GET']);
+
         $builder->connect('/users/{id}', ['controller' => 'Users'])
             ->setPass(['id'])
             ->setMethods(['GET', 'PATCH', 'PUT', 'DELETE']);
@@ -109,14 +111,18 @@ return function (RouteBuilder $routes): void {
         //Posts
         $builder->connect('/posts', ['controller' => 'Posts', 'action' => 'index'])
             ->setMethods(['GET']);
+
         $builder->connect('/posts', ['controller' => 'Posts', 'action' => 'add'])
             ->setMethods(['POST']);
+
         $builder->connect('/posts/{id}', ['controller' => 'Posts', 'action' => 'view'])
             ->setPass(['id'])
             ->setMethods(['GET']);
+
         $builder->connect('/posts/{id}', ['controller' => 'Posts', 'action' => 'edit'])
             ->setPass(['id'])
             ->setMethods(['PATCH', 'PUT']);
+
         $builder->connect('/posts/{id}', ['controller' => 'Posts', 'action' => 'delete'])
             ->setPass(['id'])
             ->setMethods(['DELETE']);
@@ -124,14 +130,18 @@ return function (RouteBuilder $routes): void {
         //Categories
         $builder->connect('/categories', ['controller' => 'Categories', 'action' => 'index'])
             ->setMethods(['GET']);
+
         $builder->connect('/categories', ['controller' => 'Categories', 'action' => 'add'])
             ->setMethods(['POST']);
+
         $builder->connect('/categories/{id}', ['controller' => 'Categories', 'action' => 'view'])
             ->setPass(['id'])
             ->setMethods(['GET']);
+
         $builder->connect('/categories/{id}', ['controller' => 'Categories', 'action' => 'edit'])
             ->setPass(['id'])
             ->setMethods(['PATCH', 'PUT']);
+
         $builder->connect('/categories/{id}', ['controller' => 'Categories', 'action' => 'delete'])
             ->setPass(['id'])
             ->setMethods(['DELETE']);
@@ -139,14 +149,18 @@ return function (RouteBuilder $routes): void {
         //Comments
         $builder->connect('/comments', ['controller' => 'Comments', 'action' => 'index'])
             ->setMethods(['GET']);
+
         $builder->connect('/comments', ['controller' => 'Comments', 'action' => 'add'])
             ->setMethods(['POST']);
+
         $builder->connect('/comments/{id}', ['controller' => 'Comments', 'action' => 'view'])
             ->setPass(['id'])
             ->setMethods(['GET']);
+
         $builder->connect('/comments/{id}', ['controller' => 'Comments', 'action' => 'edit'])
             ->setPass(['id'])
             ->setMethods(['PATCH', 'PUT']);
+
         $builder->connect('/comments/{id}', ['controller' => 'Comments', 'action' => 'delete'])
             ->setPass(['id'])
             ->setMethods(['DELETE']);
