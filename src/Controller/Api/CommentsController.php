@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AppController;
+use App\Controller\Component\ApiAuthComponent;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
@@ -17,10 +18,17 @@ use Cake\Http\Exception\NotFoundException;
 class CommentsController extends AppController
 {
 
+    /**
+     * @return void
+     * @throws \Exception
+     */
     public function initialize(): void
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
+        $this->RequestHandler->renderAs($this, 'json');
+
+        $this->loadComponent(ApiAuthComponent::class);
     }
 
     /**

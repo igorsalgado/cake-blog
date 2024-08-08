@@ -6,7 +6,8 @@ namespace App\Controller\Api;
 use App\Controller\AppController;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Http\Exception\UnauthorizedException;
+use Cake\Utility\Security;
+use Firebase\JWT\JWT;
 
 /**
  * Users Controller
@@ -16,7 +17,10 @@ use Cake\Http\Exception\UnauthorizedException;
  */
 class UsersController extends AppController
 {
-
+    /**
+     * @return void
+     * @throws \Exception
+     */
     public function initialize(): void
     {
         parent::initialize();
@@ -33,7 +37,7 @@ class UsersController extends AppController
         $users = $this->Users->find('all');
         $this->set([
             'users' => $users,
-            '_serialize' => ['users']
+            '_serialize' => ['users'],
         ]);
     }
 
@@ -52,7 +56,7 @@ class UsersController extends AppController
         }
         $this->set([
             'user' => $user,
-            '_serialize' => ['user']
+            '_serialize' => ['user'],
         ]);
     }
 
@@ -64,14 +68,35 @@ class UsersController extends AppController
      */
     public function login()
     {
+        $this->request->allowMethod(['post']);
+
         $user = $this->Auth->identify();
         if (!$user) {
-            throw new UnauthorizedException('Invalid email or password');
+            $this->response = $this->response->withStatus(400);
+            $this->set([
+                'message' => 'Invalid credentials',
+                '_serialize' => ['message'],
+            ]);
+
+            return;
         }
+
+        $this->Auth->setUser($user);
+
+        $token = JWT::encode([
+            'sub' => $user['id'],
+            'exp' => time() + 3600,
+        ], Security::getSalt());
+
         $this->set([
-            'message' => 'Login successful',
-            'user' => $user,
-            '_serialize' => ['message', 'user']
+            'status' => 'success',
+            'data' => [
+                'token' => $token,
+                'user' => [
+                    'id' => $user['id'],
+                ],
+            ],
+            '_serialize' => ['status', 'data'],
         ]);
     }
 
@@ -90,29 +115,15 @@ class UsersController extends AppController
                 $this->set([
                     'message' => 'User registered successfully',
                     'user' => $user,
-                    '_serialize' => ['message', 'user']
+                    '_serialize' => ['message', 'user'],
                 ]);
             } else {
                 $this->set([
                     'errors' => $user->getErrors(),
-                    '_serialize' => ['errors']
+                    '_serialize' => ['errors'],
                 ]);
             }
         }
-    }
-
-    /**
-     * Logout method
-     *
-     * @return \Cake\Http\Response|null|void
-     */
-    public function logout()
-    {
-        $this->Auth->logout();
-        $this->set([
-            'message' => 'Logout successful',
-            '_serialize' => ['message']
-        ]);
     }
 
     /**
@@ -131,7 +142,7 @@ class UsersController extends AppController
                 $this->set([
                     'message' => 'User updated successfully',
                     'user' => $user,
-                    '_serialize' => ['message', 'user']
+                    '_serialize' => ['message', 'user'],
                 ]);
             } else {
                 throw new BadRequestException('The user could not be saved. Please, try again.');
@@ -155,10 +166,20 @@ class UsersController extends AppController
         if ($this->Users->delete($user)) {
             $this->set([
                 'message' => 'User deleted successfully',
-                '_serialize' => ['message']
+                '_serialize' => ['message'],
             ]);
         } else {
             throw new BadRequestException('Unable to delete user');
         }
     }
+    /**
+     * Logout method
+     *
+     * @return \Cake\Http\Response|null|void
+     */
+    public function logout()
+    {
+        return $this->redirect($this->Auth->logout());
+    }
+
 }

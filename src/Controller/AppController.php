@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
+use App\Controller\Component\ApiAuthComponent;
 use Cake\Controller\Controller;
+use Cake\Http\Exception\UnauthorizedException;
 
 /**
  * Application Controller
@@ -43,11 +45,32 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
+        $this->loadComponent(ApiAuthComponent::class);
+        //$this->loadComponent('Auth');
+
+        $this->RequestHandler->renderAs($this, 'json');
+
+        $this->Auth->allow(); //all
 
         /*
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
          */
         //$this->loadComponent('FormProtection');
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function checkAuth()
+    {
+        $user = $this->Auth->user();
+//        \Cake\Error\dd($user);
+
+        if (!$user) {
+            throw new UnauthorizedException('Nao funcionou.', 401);
+        }
+
+        return $user;
     }
 }
