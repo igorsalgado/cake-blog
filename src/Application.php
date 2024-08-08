@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App;
 
+use ADmad\JwtAuth\Auth\JwtAuthenticate;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
@@ -64,6 +65,7 @@ class Application extends BaseApplication
         }
 
         // Load more plugins here
+        $this->addPlugin('ADmad/JwtAuth');
     }
 
     /**
@@ -105,6 +107,7 @@ class Application extends BaseApplication
                 if (str_starts_with($request->getRequestTarget(), '/api/')) {
                     return $handler->handle($request);
                 }
+
                 return $csrfMiddleware->process($request, $handler);
             });
 

@@ -4,23 +4,29 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Controller\AppController;
-use App\Model\Table\CategoriesTable;
+use App\Controller\Component\ApiAuthComponent;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 
 /**
  * Categories Controller
  *
- * @property CategoriesTable $Categories
+ * @property \App\Model\Table\CategoriesTable $Categories
  * @method \App\Model\Entity\Category[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class CategoriesController extends AppController
 {
-
+    /**
+     * @return void
+     * @throws \Exception
+     */
     public function initialize(): void
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
+        $this->RequestHandler->renderAs($this, 'json');
+
+        $this->loadComponent(ApiAuthComponent::class);
     }
 
     /**
@@ -33,7 +39,7 @@ class CategoriesController extends AppController
         $categories = $this->Categories->find('all');
         $this->set([
             'categories' => $categories,
-            '_serialize' => ['categories']
+            '_serialize' => ['categories'],
         ]);
     }
 
@@ -52,7 +58,7 @@ class CategoriesController extends AppController
         }
         $this->set([
             'category' => $category,
-            '_serialize' => ['category']
+            '_serialize' => ['category'],
         ]);
     }
 
@@ -70,12 +76,12 @@ class CategoriesController extends AppController
                 $this->set([
                     'message' => 'Category created successfully',
                     'category' => $category,
-                    '_serialize' => ['message', 'category']
+                    '_serialize' => ['message', 'category'],
                 ]);
             } else {
                 $this->set([
                     'errors' => $category->getErrors(),
-                    '_serialize' => ['errors']
+                    '_serialize' => ['errors'],
                 ]);
             }
         }
@@ -97,14 +103,13 @@ class CategoriesController extends AppController
                 $this->set([
                     'message' => 'Category updated successfully',
                     'category' => $category,
-                    '_serialize' => ['message', 'category']
+                    '_serialize' => ['message', 'category'],
                 ]);
             } else {
                 throw new BadRequestException('Unable to update category');
             }
         }
     }
-
 
     /**
      * Delete method
@@ -121,7 +126,7 @@ class CategoriesController extends AppController
         if ($this->Categories->delete($category)) {
             $this->set([
                 'message' => 'Category deleted successfully',
-                '_serialize' => ['message']
+                '_serialize' => ['message'],
             ]);
         } else {
             throw new BadRequestException('Unable to delete category');
