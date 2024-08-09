@@ -58,19 +58,4 @@ class AppController extends Controller
          */
         //$this->loadComponent('FormProtection');
     }
-
-    /**
-     * @return mixed
-     */
-    protected function checkAuth()
-    {
-        $user = $this->Auth->user();
-//        \Cake\Error\dd($user);
-
-        if (!$user) {
-            throw new UnauthorizedException('Nao funcionou.', 401);
-        }
-
-        return $user;
-    }
 }
